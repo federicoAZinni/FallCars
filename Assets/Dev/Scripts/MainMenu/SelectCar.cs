@@ -9,7 +9,7 @@ public class SelectCar : MonoBehaviour
 
     [SerializeField] List<Vector3> posList;
 
-    [SerializeField] int currentCarSelectedIndex;
+    public int currentCarSelectedIndex;
 
 
     Coroutine rotCar;
