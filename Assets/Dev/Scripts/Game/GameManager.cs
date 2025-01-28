@@ -61,18 +61,18 @@ public class GameManager : NetworkBehaviour
 
     void SetPlayerReferences()
     {
-        if(localPlayerGameObject.TryGetComponent<CarController>(out carController))
-        {
-            carController.joystick = joystick;
-        }
+        // if(localPlayerGameObject.TryGetComponent<CarController>(out carController))
+        // {
+        //     carController.joystick = joystick;
+        // }
     }
 
     public void Accelerated(bool n)
     {
-        carController.AccelerateBtn(n);
+        // carController.AccelerateBtn(n);
     }
     public void Break(bool n)
     {
-        carController.BreakBtn(n);
+        // carController.BreakBtn(n);
     }
 }

@@ -8251,6 +8251,12 @@ PrefabInstance:
       objectReference: {fileID: 17561773}
     - target: {fileID: 1676112988417072291, guid: b89fc363dcf74004ba62c0ae0c864216,
         type: 3}
+      propertyPath: playerPrefab
+      value: 
+      objectReference: {fileID: -1888867413570171272, guid: d1d09e2abdd0d4998bd3e64a8699eb9f,
+        type: 3}
+    - target: {fileID: 1676112988417072291, guid: b89fc363dcf74004ba62c0ae0c864216,
+        type: 3}
       propertyPath: camCineMachine
       value: 
       objectReference: {fileID: 878794519533839360}

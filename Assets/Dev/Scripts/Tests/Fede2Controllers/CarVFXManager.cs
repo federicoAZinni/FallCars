@@ -7,6 +7,11 @@ public class CarVFXManager : MonoBehaviour
    [SerializeField] TrailRenderer trailRendererRight;
    [SerializeField] TrailRenderer trailRendererLeft;
    [SerializeField] SuspensionCarController carController;
+   [SerializeField] ParticleSystem particleTurboVFX;
+   [SerializeField] TrailRenderer trailTurboVFX;
+
+   
+
 
     void Update()
     {
@@ -17,6 +22,17 @@ public class CarVFXManager : MonoBehaviour
         else
         {
             StopLeaveTrail();
+        }
+
+        if ( carController.isBoosting)
+        {
+            particleTurboVFX.Play();
+            trailTurboVFX.emitting = true;
+        }
+        else
+        {
+            particleTurboVFX.Stop();
+            trailTurboVFX.emitting = false;
         }
     }
     
