@@ -182,7 +182,6 @@ GameObject:
   - component: {fileID: 4395337065123521699}
   - component: {fileID: -1888867413570171272}
   - component: {fileID: -5495185082896713820}
-  - component: {fileID: 3006474712773537699}
   m_Layer: 0
   m_Name: Car2
   m_TagString: Untagged
@@ -228,7 +227,7 @@ MonoBehaviour:
   - {fileID: 8536551381434114175}
   drivable:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 567
   accelerationPoint: {fileID: 3219660824667156828}
   backJumpForcePoint: {fileID: 1719276305006204467}
   frontJumpForcePoint: {fileID: 7689800712076630189}
@@ -325,7 +324,7 @@ MonoBehaviour:
   frontJumpAngle: 66.4
   dragCofficientForTurning: 10
   baseDragGrounded: 2
-  baseDragNotGrounded: 1
+  baseDragNotGrounded: 0.5
   tireRotSpeed: 3000
   maxTurningAngle: 30
   isGrounded: 0
@@ -391,8 +390,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boostForceOnGround: 5
-  boostForceOnAir: 1.5
-  boostConsumptionSpeed: 20
+  boostForceOnAir: 1
+  boostConsumptionSpeed: 50
   boostCurrentAmount: 100
   boostPoint: {fileID: 9121796105802512218}
   playerRb: {fileID: 2496136720778500655}
@@ -426,7 +425,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3952941868
+  GlobalObjectIdHash: 288231829
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -466,18 +465,6 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &3006474712773537699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 498699132552778690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &984843627110261805
 GameObject:
   m_ObjectHideFlags: 0

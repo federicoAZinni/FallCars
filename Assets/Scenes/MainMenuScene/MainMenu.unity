@@ -3202,7 +3202,7 @@ MonoBehaviour:
   TestMode: 1
   inputField_CodeRelay: {fileID: 378170966}
   buttonTextCodeRelay: {fileID: 1481571990}
-  maxPlayerTest: 1
+  maxPlayerTest: 2
 --- !u!4 &688199384
 Transform:
   m_ObjectHideFlags: 0
