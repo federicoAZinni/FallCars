@@ -14,18 +14,18 @@ public class GameManager : NetworkBehaviour
     [SerializeField] CinemachineVirtualCamera camCineMachine;
     [SerializeField] FixedJoystick joystick;
     [SerializeField] CarController carController;
-
+    public ulong localId;
 
     [Space(5)]
     [Header("Spawn Ref")]
     public Transform[] spawnPoints;
-    
-    
+
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
         if (IsHost) SpawnPlayers();
+        localId = NetworkManager.Singleton.LocalClientId;
     }
 
     void SpawnPlayers()
@@ -46,19 +46,22 @@ public class GameManager : NetworkBehaviour
     {
         foreach (var item in NetworkManager.Singleton.SpawnManager.SpawnedObjectsList)
         {
-            if (item.IsOwner) localPlayerGameObject = item.gameObject;
+            if (item.IsOwner) //Set localPlayer Properties
+            {
+                localPlayerGameObject = item.gameObject;
+                localPlayerGameObject.tag = "Player";
+            }
         }
 
         SetVirtualCamera();
         SetPlayerReferences();
     }
-
+    #region SetLocalPlayer
     void SetVirtualCamera()
     {
         camCineMachine.Follow = localPlayerGameObject.transform;
         camCineMachine.LookAt = localPlayerGameObject.transform;
     }
-
     void SetPlayerReferences()
     {
         // if(localPlayerGameObject.TryGetComponent<CarController>(out carController))
@@ -66,7 +69,6 @@ public class GameManager : NetworkBehaviour
         //     carController.joystick = joystick;
         // }
     }
-
     public void Accelerated(bool n)
     {
         // carController.AccelerateBtn(n);
@@ -75,4 +77,26 @@ public class GameManager : NetworkBehaviour
     {
         // carController.BreakBtn(n);
     }
+    #endregion
+
+    [ServerRpc(RequireOwnership = false)]
+    public void FinishRaceServerRpc(ulong idPlayer)
+    {
+        FinishRaceClientRpc(idPlayer);
+    }
+
+    [ClientRpc]
+    public void FinishRaceClientRpc(ulong idPlayerWin)
+    {
+        Debug.Log(idPlayerWin);
+
+        if(idPlayerWin == NetworkManager.LocalClientId)
+        {
+            Debug.Log("You Win"); //Poner la pantalla de ganador
+        }else
+        {
+            Debug.Log("You Lose");//Poner la pantalla de perdedor
+        }
+    }
+
 }

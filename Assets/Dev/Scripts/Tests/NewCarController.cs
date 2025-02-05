@@ -60,9 +60,6 @@ public class NewCarController : MonoBehaviour
 
         followElement();
 
-       
-        
-
     }
 
     private void FixedUpdate()
