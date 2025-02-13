@@ -8,7 +8,7 @@ public class FollowObject : MonoBehaviour
     [SerializeField] bool followRotation = true;
     
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         transform.position = target.position;
         if (!followRotation) return;

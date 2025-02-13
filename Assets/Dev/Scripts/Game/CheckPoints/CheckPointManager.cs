@@ -1,13 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class CheckPointManager : MonoBehaviour
 {
     [SerializeField] CheckPoint checkPointPrefab;
-    [SerializeField] List<CheckPoint> checkPointsList;
     [SerializeField] GameManager gameManager;
+    public List<CheckPoint> checkPointsList;
     public int currentCheckPointIndex = 0;
 
 

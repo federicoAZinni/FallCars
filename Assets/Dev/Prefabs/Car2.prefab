@@ -177,14 +177,15 @@ GameObject:
   - component: {fileID: 7327457932664545508}
   - component: {fileID: 1497393286805080731}
   - component: {fileID: 2496136720778500655}
-  - component: {fileID: 8238078047157532076}
+  - component: {fileID: 1337671750088940850}
+  - component: {fileID: 133832036898994572}
   - component: {fileID: 2760797101044917159}
   - component: {fileID: 4395337065123521699}
   - component: {fileID: -1888867413570171272}
   - component: {fileID: -5495185082896713820}
   m_Layer: 0
   m_Name: Car2
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -244,10 +245,10 @@ MonoBehaviour:
   damperStiffness: 1200
   restLenght: 0.35
   springTravel: 0.12
-  wheelRadius: 0.2
+  wheelRadius: 0.25
   handBrake: 0
-  acceleration: 75
-  deAcceleration: 30
+  acceleration: 100
+  deAcceleration: 40
   maxSpeed: 10
   turnStrength: 50
   turningCurve:
@@ -356,7 +357,30 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &8238078047157532076
+--- !u!136 &1337671750088940850
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 498699132552778690}
+  m_Material: {fileID: 13400000, guid: dfdb4ad4b2d3742668798a178853365e, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.33046025
+  m_Height: 1.2458738
+  m_Direction: 2
+  m_Center: {x: -0.0014309991, y: 0.120588906, z: -0.010552576}
+--- !u!65 &133832036898994572
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -375,8 +399,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.70096296, z: 1}
-  m_Center: {x: 0, y: 0.14951825, z: 0}
+  m_Size: {x: 0.7558187, y: 0.85704935, z: 0.81266767}
+  m_Center: {x: 0.0008373097, y: 0.13151057, z: -0.012978645}
 --- !u!114 &2760797101044917159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,9 +413,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ceeb994adc447a5938e28d408f037b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boostForceOnGround: 5
+  boostForceOnGround: 6
   boostForceOnAir: 1
-  boostConsumptionSpeed: 50
+  boostConsumptionSpeed: 65
   boostCurrentAmount: 100
   boostPoint: {fileID: 9121796105802512218}
   playerRb: {fileID: 2496136720778500655}
@@ -5597,7 +5621,7 @@ Transform:
   m_GameObject: {fileID: 3029078703792601686}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.80006814, z: -0.4}
+  m_LocalPosition: {x: 0, y: 0.25, z: -0.41}
   m_LocalScale: {x: 0.9090909, y: 1.215909, z: 0.540404}
   m_ConstrainProportionsScale: 0
   m_Children: []

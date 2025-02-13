@@ -8,6 +8,7 @@ public class CheckPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("CheckPoint"+other.CompareTag("Player"));
         if(other.CompareTag("Player"))
         {
             manager.NextCheckPoint(this);
