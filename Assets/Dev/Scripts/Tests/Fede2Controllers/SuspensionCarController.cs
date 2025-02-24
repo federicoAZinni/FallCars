@@ -1,5 +1,8 @@
 using System;
+using Unity.VisualScripting;
+using UnityEditor.Callbacks;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SuspensionCarController : MonoBehaviour
 {
@@ -28,6 +31,8 @@ public class SuspensionCarController : MonoBehaviour
     float steerInput;
     public bool handBrake;
     bool boost;
+    [SerializeField] float keyboardInputSmoothing = 5f; 
+    
 
     [Header("Car Settings")]
     
@@ -56,7 +61,7 @@ public class SuspensionCarController : MonoBehaviour
     [SerializeField] float tireRotSpeed = 3000f;
     [SerializeField] float maxTurningAngle = 30f; 
     
-
+    #region Parameters
     Vector3 currentVelocity = Vector3.zero;
     float carVelocityRatio;
     int [] wheelIsGrounded = new int[4];
@@ -66,32 +71,61 @@ public class SuspensionCarController : MonoBehaviour
     float originalAcceleration;
     float timeOfHandBreak;
     float jumpTimer = 3;
-    public event Action OnJump;
     public event Action OnBoost;
-    
-
-
- 
+    private static Controls inputActions;
+    private float accelerateInput;
+    private enum ControlTypes
+    {
+        Keyboard,
+        Controller,
+        Screen
+    };
+    private ControlTypes controlType = ControlTypes.Keyboard;   
+    private Vector2 smoothInput;
+    #endregion
+    #region Delegates
+    public delegate void Accelerate();
+    Accelerate accelerateDelegate;
+    public delegate void DeAccelerate();
+    Accelerate deAccelerateDelegate;
+    #endregion
+    void Awake()
+    {
+        if (inputActions == null)
+        {
+            InitializeInputActions();
+        }
+        accelerateDelegate = AccelerateKeyboard;
+        deAccelerateDelegate = DeAccelerateKeyboard;
+    }
     void Start()
     {
         carRb = GetComponent<Rigidbody>();
         originalTurnStrength = turnStrength;
         originalAcceleration = acceleration;
-       
-       
     }
     void OnEnable()
     {
-        OnJump += PerformJump;
+        inputActions.Player.Enable();
+        inputActions.Player.Jump.performed+= PerformJump;
+        inputActions.Player.Movement.performed+= GetControlType;
+        inputActions.Player.Accelerate.performed+= GetControlType;
+        inputActions.Player.Break.performed+= GetControlType;
+        
     }
     void OnDisable()
     {
-        OnJump -= PerformJump;
+        inputActions.Player.Disable();
+        inputActions.Player.Jump.performed-= PerformJump;
+        inputActions.Player.Movement.performed-= GetControlType;
+        inputActions.Player.Accelerate.performed-= GetControlType;
+        inputActions.Player.Break.performed-= GetControlType;
     }
 
     void Update()
     {
         GetInput();
+        
     }
 
   
@@ -135,6 +169,7 @@ public class SuspensionCarController : MonoBehaviour
         
         currentVelocity = transform.InverseTransformDirection(carRb.velocity);
         carVelocityRatio = currentVelocity.z / maxSpeed;
+    
     }
     void Suspension()
 
@@ -192,12 +227,51 @@ public class SuspensionCarController : MonoBehaviour
     {
         tire.transform.position = targetPosition;
     }
+    
+    private void GetControlType(InputAction.CallbackContext context)
+    {
+        if (context.control.device is Keyboard)
+        {
+            if (controlType==ControlTypes.Keyboard) return;
+            controlType = ControlTypes.Keyboard;
+            accelerateDelegate = AccelerateKeyboard;
+            deAccelerateDelegate = DeAccelerateKeyboard;
+        }
+        else if (context.control.device is Gamepad)
+        {
+            if (controlType==ControlTypes.Controller) return;
+            controlType = ControlTypes.Controller;
+            accelerateDelegate = AccelerateController;
+            deAccelerateDelegate = DeAccelerateController;
+        }
+    }
     void GetInput()
     {
-        moveInput = Input.GetAxis("Vertical");
-        steerInput = Input.GetAxis("Horizontal");
-        handBrake = Input.GetKey(KeyCode.LeftControl);
-        if (Input.GetKey(KeyCode.Mouse1))
+        Vector2 inputVector = inputActions.Player.Movement.ReadValue<Vector2>();
+
+        if (controlType==ControlTypes.Keyboard)
+        {
+            smoothInput = new Vector2 (
+                Mathf.Lerp(smoothInput.x, inputVector.x, Time.deltaTime * keyboardInputSmoothing),
+                Mathf.Lerp(smoothInput.y, inputVector.y, Time.deltaTime * keyboardInputSmoothing)
+                );
+            if (inputVector.y==0)
+            {
+                smoothInput.y = 0;
+            }
+            moveInput = smoothInput.y;
+            steerInput = smoothInput.x;
+        }
+        else
+        {
+            moveInput = inputVector.y;
+            steerInput = inputVector.x;
+            accelerateInput = inputActions.Player.Accelerate.ReadValue<float>()-inputActions.Player.Break.ReadValue<float>();
+        }
+      
+       
+        handBrake = inputActions.Player.HandBreak.ReadValue<float>()>0.5f;
+        if (inputActions.Player.Boost.ReadValue<float>()>0.5f)
         {
             OnBoost?.Invoke();
         }else
@@ -205,10 +279,8 @@ public class SuspensionCarController : MonoBehaviour
             isBoosting=false;
         }
         
-        if (Input.GetKeyDown(KeyCode.Space)&&jumpTimer >= jumpColdDownTime)
-        {
-            OnJump?.Invoke();
-        }
+
+        
    
     }
 
@@ -222,15 +294,17 @@ public class SuspensionCarController : MonoBehaviour
             HandBrake();
            
             if (isBoosting)return;
-            DeAccelerate();
-            Accelerate();
+            deAccelerateDelegate();
+            accelerateDelegate();
 
         }else
         {
             TurnInAir();
         }
     }
-    void Accelerate()
+
+    //Se llaman desde el delegado DeAccelerate y Accelerate, dependiendo el tipo de input
+    void AccelerateKeyboard()
     {
         // if (currentVelocity.z<maxSpeed)
         // {
@@ -239,12 +313,20 @@ public class SuspensionCarController : MonoBehaviour
         carRb.AddForceAtPosition(acceleration*moveInput*transform.forward, accelerationPoint.position, ForceMode.Acceleration);
         
     }
-    void DeAccelerate()
+    void DeAccelerateKeyboard()
     {
         
         // carRb.AddForceAtPosition(deAcceleration*Mathf.Abs(carVelocityRatio)*-transform.forward, accelerationPoint.position, ForceMode.Acceleration);
         carRb.AddForceAtPosition(deAcceleration*moveInput*-transform.forward, accelerationPoint.position, ForceMode.Acceleration);
         
+    }
+    void AccelerateController()
+    {
+        carRb.AddForceAtPosition(acceleration*accelerateInput*transform.forward, accelerationPoint.position, ForceMode.Acceleration);
+    }
+    void DeAccelerateController()
+    {
+        carRb.AddForceAtPosition(deAcceleration*accelerateInput*-transform.forward, accelerationPoint.position, ForceMode.Acceleration);
     }
     void Turn()
     {
@@ -283,11 +365,13 @@ public class SuspensionCarController : MonoBehaviour
            
         }
     }
-    void PerformJump()
+    void PerformJump(InputAction.CallbackContext context)
     {
+        if (!(jumpTimer >= jumpColdDownTime))return;
        
         jumpTimer = 0;
-        if (moveInput!=0)
+        Debug.Log("Jump");
+        if (moveInput>-0.5f&&moveInput<0)
         {
             if (moveInput>0)
             {
@@ -296,7 +380,7 @@ public class SuspensionCarController : MonoBehaviour
             carRb.velocity = Vector3.zero;
             carRb.AddForceAtPosition(rotation * Vector3.up * jumpStrenght,backJumpForcePoint.transform.position,ForceMode.VelocityChange);
             }
-            else if (moveInput<0)
+            else if (moveInput<-0.5f)
             {
             Quaternion rotation = transform.rotation * Quaternion.Euler(Math.Sign(moveInput) * frontJumpAngle, 0, 0);
             carRb.velocity = Vector3.zero;
@@ -326,4 +410,20 @@ public class SuspensionCarController : MonoBehaviour
         carRb.AddForceAtPosition(dragForce, carRb.worldCenterOfMass, ForceMode.Acceleration);
 
     }
+
+    private static void InitializeInputActions()
+    {
+       inputActions = new Controls();
+    }
+
+    public static Controls GetInputActions()
+    {
+        if (inputActions == null)
+        {
+            InitializeInputActions();
+        }
+        return inputActions;
+    }
+
+    
 }

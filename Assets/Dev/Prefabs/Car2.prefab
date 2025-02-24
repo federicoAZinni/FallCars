@@ -247,6 +247,7 @@ MonoBehaviour:
   springTravel: 0.12
   wheelRadius: 0.25
   handBrake: 0
+  keyboardInputSmoothing: 10
   acceleration: 100
   deAcceleration: 40
   maxSpeed: 10
